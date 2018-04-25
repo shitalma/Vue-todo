@@ -6,6 +6,7 @@ import ToDo from './components/ToDo'
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
+
 new Vue({
   el: '#app',
   components: { ToDo },
