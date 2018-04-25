@@ -2,7 +2,7 @@
   <div id="app">
     <h1>{{ msg }}</h1>
     <ul id="todos">
-      <li v-for="todo in todos">
+      <li v-for="todo in todos" :key="todo.id">
         {{ todo.name }}
       </li>
     </ul>
