@@ -4,8 +4,8 @@
 
       <section class="panel">
 
-        <input v-model="newTask" @keyup.enter="addTask" placeholder="What do you need to do?" autofocus class="text-input">
-        <button @click="clearList">Clear List</button>
+        <input v-model="newTask" @keyup.enter="addTask" placeholder="What's on your mind?" autofocus class="text-input">
+        <button @click="clearList">Delete All</button>
 
       </section>
 
@@ -14,11 +14,9 @@
         <ul class="list-item">
           <li v-for="task in tasks" :key="task.text" :class="{done: isChecked(task)}">
 
-            <input type="checkbox" class="checkbox" @click="check" v-model="task.checked">
+            <input type="checkbox" class="checkbox" v-model="task.checked">
 
-            <input type="text" v-if="task === editingTask" v-auto-focus class="text-input" @keyup.enter="endEditing(task)" @blur="endEditing(task)" v-model="task.text">
-
-            <label v-if="task !== editingTask" @dblclick="editTask(task)">{{ task.text }}</label>
+            <span>{{ task.text }}</span>
 
             <button class="delete" @click="removeTask(task)">X</button>
 
@@ -28,26 +26,36 @@
       </section>
 
     </div>
+    <section class="footer">
+      <p>Total = {{totalTasks}}</p>
+      <p v-bind:hidden="allTasksCompleted">Completed = {{completedTasks}}</p>
+      <p class="complete" v-show="allTasksCompleted">No Pending Tasks. You are awesome!</p>
+    </section>
   </div>
 </template>
 
 <script>
 export default {
-  data: function () {
+  data: () => {
     return {
       newTask: '',
-      tasks: [],
-      editingTask: {}
+      tasks: []
     }
   },
 
   computed: {
-    areAllSelected: function () {
+    allTasksCompleted: function () {
       return this.tasks.every((task) => task.checked) && this.tasks.length > 0
+    },
+    totalTasks: function () {
+      return this.tasks.length
+    },
+    completedTasks: function () {
+      return this.tasks.filter((task) => task.checked).length
     }
   },
-  methods: {
 
+  methods: {
     addTask: function () {
       const task = this.newTask.trim()
       if (task) {
@@ -61,26 +69,8 @@ export default {
       this.tasks.splice(index, 1)
     },
 
-    editTask: function (task) {
-      this.editingTask = task
-    },
-
-    endEditing: function (task) {
-      this.editingTask = {}
-      if (task.text.trim() === '') {
-        this.removeTask(task)
-      }
-    },
-
     clearList: function () {
       this.tasks = []
-    },
-
-    selectAll: function (t) {
-      const targetValue = !this.areAllSelected
-      for (let i = 0; i < this.tasks.length; i++) {
-        this.tasks[i].checked = targetValue
-      }
     },
 
     check: (task) => {
@@ -94,20 +84,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  /* Relevant resets */
-
   ul, li {
     margin: 0;
     padding: 0;
     border: 0;
   }
 
-  /* Global Styles */
-
   body {
     line-height: 1;
     font-family: "Lato", sans-serif;
-    background-color: #EFF1F2;
   }
 
   .container {
@@ -124,6 +109,20 @@ export default {
     padding: 10px;
     border-bottom: 1px solid #efefef;
     background-color: #E7E8EB;
+  }
+
+  .footer {
+    width: 70%;
+    margin: 1em auto 3em;
+    border: 0;
+  }
+
+  .footer p {
+    color: grey;
+  }
+
+  .footer .complete {
+    color: #42b983;
   }
 
   .text-input {
@@ -145,15 +144,9 @@ export default {
     font-size: 14px;
   }
 
-  /* Task  area */
-
-  .list li {
-    background-color: #3465A4;
-  }
-
   .list li button {
     background-color: transparent;
-    border: 1px solid #3465A4;
+    border: 0;
     color: #ddd;
     visibility: hidden;
     font-size: 20px;
@@ -164,44 +157,17 @@ export default {
     visibility: visible;
   }
 
-  .list label {
-    padding-right: 10px;
+  .list span {
+    padding: 0 5px 0 0;
     display: inline-block;
     width: 70%;
     font-size: 18px;
     line-height: 24px;
-    color: #fcfcfc;
-    z-index: 2;
-    overflow: hidden;
+    color: #42b983;
   }
 
-  .list li.done label {
-    color: #d9d9d9;
+  .list li.done span {
+    color: #29384B;
     text-decoration: line-through;
-  }
-
-  /* Instructions and Credit */
-
-  .hidden {
-    display: none;
-  }
-
-  /* Media Queries */
-
-  @media screen and (max-width: 768px) {
-    .container {
-      width: 90%;
-      max-width: 90%;
-    }
-
-    .text-input, .list label {
-      width: 60%;
-      font-size: 14px;
-    }
-
-    button {
-      width: 50px;
-      height: 50px;
-    }
   }
 </style>
